@@ -1,12 +1,14 @@
-import { Header } from "../components/Header";
-import { Summary } from "../components/Summary";
+import { Header } from "../../components/Header";
+import { Summary } from "../../components/Summary";
+import { SearchForm } from "./components/SearchForm";
 
 export const Transactions = () => {
 	return (
 		<>
 			<Header />
 			<Summary />
-			<main className="max-w-screen-xl mx-auto px-4 xl:px-0 my-16">
+			<main className="max-w-screen-xl mx-auto px-4 xl:px-0 my-16 flex flex-col gap-4">
+				<SearchForm />
 				<table className="table-auto border-separate border-spacing-x-0 border-spacing-y-2 w-full">
 					<tbody>
 						<tr>
