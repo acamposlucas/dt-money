@@ -32,8 +32,8 @@ export const Header = () => {
 						className="fixed inset-0 bg-black/30"
 						aria-hidden="true"
 					/>
-					<div className="fixed top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 p-4">
-						<Dialog.Panel className="bg-gray-800 max-w-xl py-10 px-12 rounded-md relative">
+					<div className="fixed inset-0 flex items-center justify-center p-4 w-full">
+						<Dialog.Panel className="bg-gray-800 max-w-lg w-full py-10 px-12 rounded-md relative">
 							<button
 								type="button"
 								onClick={closeModal}
