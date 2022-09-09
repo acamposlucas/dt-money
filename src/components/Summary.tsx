@@ -1,6 +1,10 @@
 import { ArrowCircleDown, ArrowCircleUp, CurrencyDollar } from "phosphor-react";
+import { useContext } from "react";
+import { TransactionsContext } from "../contexts/TransactionContext";
 
 export const Summary = () => {
+	const { transactions } = useContext(TransactionsContext);
+
 	return (
 		<section className="max-w-screen-xl mx-auto px-4 xl:px-0 grid grid-cols-3 gap-8 -mt-20">
 			<div
