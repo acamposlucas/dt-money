@@ -1,8 +1,30 @@
+import { useEffect, useState } from "react";
 import { Header } from "../../components/Header";
 import { Summary } from "../../components/Summary";
 import { SearchForm } from "./components/SearchForm";
 
+interface Transaction {
+	id: number;
+	description: string;
+	type: "income" | "outcome";
+	price: number;
+	category: string;
+	createdAt: string;
+}
+
 export const Transactions = () => {
+	const [transactions, setTransactions] = useState<Transaction[]>([]);
+
+	const loadTransactions = async () => {
+		const response = await fetch("http://localhost:3000/transactions");
+		const data = await response.json();
+		setTransactions(data);
+	};
+
+	useEffect(() => {
+		loadTransactions();
+	}, []);
+
 	return (
 		<>
 			<Header />
@@ -11,26 +33,25 @@ export const Transactions = () => {
 				<SearchForm />
 				<table className="table-auto border-separate border-spacing-x-0 border-spacing-y-2 w-full">
 					<tbody>
-						<tr>
-							<td className="px-8 py-5 bg-gray-700 rounded-tl-md rounded-bl-md">
-								Desenvolvimento de site
-							</td>
-							<td className={`px-8 py-5 bg-gray-700 text-green-300`}>R$ 12.000,00</td>
-							<td className="px-8 py-5 bg-gray-700">Vendas</td>
-							<td className="px-8 py-5 bg-gray-700 rounded-tr-md rounded-br-md">
-								13/04/2022
-							</td>
-						</tr>
-						<tr>
-							<td className="px-8 py-5 bg-gray-700 rounded-tl-md rounded-bl-md">
-								Compras
-							</td>
-							<td className="px-8 py-5 bg-gray-700 text-red-300">- R$ 50,00</td>
-							<td className="px-8 py-5 bg-gray-700">Alimentação</td>
-							<td className="px-8 py-5 bg-gray-700  rounded-tr-md rounded-br-md">
-								13/04/2022
-							</td>
-						</tr>
+						{transactions.map((transaction) => {
+							return (
+								<tr key={transaction.id}>
+									<td className="px-8 py-5 bg-gray-700 rounded-tl-md rounded-bl-md">
+										{transaction.description}
+									</td>
+									<td
+										className={`px-8 py-5 bg-gray-700 ${
+											transaction.type === "income" ? "text-green-300" : "text-red-300"
+										}`}>
+										{transaction.price}
+									</td>
+									<td className="px-8 py-5 bg-gray-700">{transaction.category}</td>
+									<td className="px-8 py-5 bg-gray-700 rounded-tr-md rounded-br-md">
+										{transaction.createdAt}
+									</td>
+								</tr>
+							);
+						})}
 					</tbody>
 				</table>
 			</main>
