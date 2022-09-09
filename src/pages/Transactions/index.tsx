@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { Header } from "../../components/Header";
 import { Summary } from "../../components/Summary";
 import { TransactionsContext } from "../../contexts/TransactionContext";
+import { dateFormatter, priceFormatter } from "../../utils/formatter";
 import { SearchForm } from "./components/SearchForm";
 
 interface Transaction {
@@ -34,11 +35,12 @@ export const Transactions = () => {
 										className={`px-8 py-5 bg-gray-700 ${
 											transaction.type === "income" ? "text-green-300" : "text-red-300"
 										}`}>
-										{transaction.price}
+										{transaction.type === "outcome" && "- "}
+										{priceFormatter.format(transaction.price)}
 									</td>
 									<td className="px-8 py-5 bg-gray-700">{transaction.category}</td>
 									<td className="px-8 py-5 bg-gray-700 rounded-tr-md rounded-br-md">
-										{transaction.createdAt}
+										{dateFormatter.format(new Date(transaction.createdAt))}
 									</td>
 								</tr>
 							);

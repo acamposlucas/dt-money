@@ -1,9 +1,29 @@
 import { ArrowCircleDown, ArrowCircleUp, CurrencyDollar } from "phosphor-react";
 import { useContext } from "react";
 import { TransactionsContext } from "../contexts/TransactionContext";
+import { priceFormatter } from "../utils/formatter";
 
 export const Summary = () => {
 	const { transactions } = useContext(TransactionsContext);
+
+	const summary = transactions.reduce(
+		(acc, transaction) => {
+			if (transaction.type === "income") {
+				acc.income += transaction.price;
+				acc.total += transaction.price;
+			} else {
+				acc.outcome += transaction.price;
+				acc.total -= transaction.price;
+			}
+
+			return acc;
+		},
+		{
+			income: 0,
+			outcome: 0,
+			total: 0,
+		}
+	);
 
 	return (
 		<section className="max-w-screen-xl mx-auto px-4 xl:px-0 grid grid-cols-3 gap-8 -mt-20">
@@ -21,7 +41,7 @@ export const Summary = () => {
 				<h2
 					id="entradas-valor"
 					className="text-2xl font-bold text-gray-100">
-					R$ 17.400,00
+					{priceFormatter.format(summary.income)}
 				</h2>
 			</div>
 			<div
@@ -38,7 +58,7 @@ export const Summary = () => {
 				<h2
 					id="saidas-valor"
 					className="text-2xl font-bold text-gray-100">
-					R$ 17.400,00
+					{priceFormatter.format(summary.outcome)}
 				</h2>
 			</div>
 			<div
@@ -55,7 +75,7 @@ export const Summary = () => {
 				<h1
 					id="total-valor"
 					className="text-2xl font-bold text-gray-100">
-					R$ 17.400,00
+					{priceFormatter.format(summary.total)}
 				</h1>
 			</div>
 		</section>
