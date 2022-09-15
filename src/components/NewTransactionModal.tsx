@@ -1,12 +1,38 @@
 import { RadioGroup } from "@headlessui/react";
 import { ArrowCircleDown, ArrowCircleUp } from "phosphor-react";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import * as z from "zod";
+
+const newTransactionFormSchema = z.object({
+	description: z.string(),
+	price: z.number(),
+	category: z.string(),
+	// type: z.enum(["income", "outcome"]),
+});
+
+type NewTrasactionFormInputs = z.infer<typeof newTransactionFormSchema>;
 
 export const NewTransactionModal = () => {
 	const [transaction, setTransaction] = useState("income");
+	const {
+		register,
+		handleSubmit,
+		formState: { isSubmitting },
+	} = useForm<NewTrasactionFormInputs>({
+		resolver: zodResolver(newTransactionFormSchema),
+	});
+
+	async function handleCreateNewTransaction(data: NewTrasactionFormInputs) {
+		await new Promise((resolve) => setTimeout(resolve, 2000));
+
+		console.log(data);
+	}
 
 	return (
-		<form>
+		<form onSubmit={handleSubmit(handleCreateNewTransaction)}>
 			<div
 				role="group"
 				className="flex flex-col gap-4">
@@ -14,6 +40,7 @@ export const NewTransactionModal = () => {
 					htmlFor="description"
 					className="flex-1">
 					<input
+						{...register("description")}
 						className="w-full bg-gray-900 outline-none p-4 rounded-md text-gray-500 placeholder:text-gray-500 border border-transparent focus:border-green-300"
 						placeholder="Descrição"
 						type="text"
@@ -24,6 +51,7 @@ export const NewTransactionModal = () => {
 					htmlFor="value"
 					className="flex-1">
 					<input
+						{...register("price", { valueAsNumber: true })}
 						className="w-full bg-gray-900 outline-none p-4 rounded-md text-gray-500 placeholder:text-gray-500 border border-transparent focus:border-green-300"
 						placeholder="Valor"
 						type="text"
@@ -34,6 +62,7 @@ export const NewTransactionModal = () => {
 					htmlFor="category"
 					className="flex-1">
 					<input
+						{...register("category")}
 						className="w-full bg-gray-900 outline-none p-4 rounded-md text-gray-500 placeholder:text-gray-500 border border-transparent focus:border-green-300"
 						placeholder="Categoria"
 						type="text"
@@ -90,8 +119,9 @@ export const NewTransactionModal = () => {
 				</RadioGroup.Option>
 			</RadioGroup>
 			<button
+				disabled={isSubmitting}
 				type="submit"
-				className="block w-full rounded-md text-white bg-green-500 hover:bg-green-300 py-4 hover:transition-colors">
+				className="block w-full rounded-md cursor-pointer text-white bg-green-500 enabled:hover:bg-green-300 py-4 enabled:hover:transition-colors disabled:cursor-not-allowed disabled:opacity-60">
 				Cadastrar
 			</button>
 		</form>
