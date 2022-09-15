@@ -1,7 +1,7 @@
 import { RadioGroup } from "@headlessui/react";
 import { ArrowCircleDown, ArrowCircleUp } from "phosphor-react";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import * as z from "zod";
@@ -10,19 +10,22 @@ const newTransactionFormSchema = z.object({
 	description: z.string(),
 	price: z.number(),
 	category: z.string(),
-	// type: z.enum(["income", "outcome"]),
+	type: z.enum(["income", "outcome"]),
 });
 
 type NewTrasactionFormInputs = z.infer<typeof newTransactionFormSchema>;
 
 export const NewTransactionModal = () => {
-	const [transaction, setTransaction] = useState("income");
 	const {
+		control,
 		register,
 		handleSubmit,
 		formState: { isSubmitting },
 	} = useForm<NewTrasactionFormInputs>({
 		resolver: zodResolver(newTransactionFormSchema),
+		defaultValues: {
+			type: "income",
+		},
 	});
 
 	async function handleCreateNewTransaction(data: NewTrasactionFormInputs) {
@@ -70,54 +73,64 @@ export const NewTransactionModal = () => {
 					/>
 				</label>
 			</div>
-			<RadioGroup
-				value={transaction}
-				onChange={setTransaction}
-				className="flex gap-4 mt-6 mb-10">
-				<RadioGroup.Label className="sr-only">Tipo de transação</RadioGroup.Label>
-				<RadioGroup.Option
-					value="income"
-					className="flex-1">
-					{({ checked }) => (
-						<div
-							className={`px-6 py-4 rounded-md ${
-								checked ? "bg-green-700" : "bg-gray-700 hover:bg-gray-600"
-							}`}>
-							<span
-								className={`${
-									checked ? "text-white" : "text-gray-300"
-								} flex items-center justify-center gap-2`}>
-								<ArrowCircleUp
-									size={24}
-									color={`${checked ? "#ffffff" : "#00B37E"}`}
-								/>
-								Entrada
-							</span>
-						</div>
-					)}
-				</RadioGroup.Option>
-				<RadioGroup.Option
-					value="outcome"
-					className="flex-1">
-					{({ checked }) => (
-						<div
-							className={`px-6 py-4 rounded-md ${
-								checked ? "bg-red-800" : "bg-gray-700 hover:bg-gray-600"
-							} hover:transition-colors`}>
-							<span
-								className={`${
-									checked ? "text-white" : "text-gray-300"
-								} flex items-center justify-center gap-2 hover:transition-colors`}>
-								<ArrowCircleDown
-									size={24}
-									color={`${checked ? "#ffffff" : "#F75A68"} `}
-								/>
-								Saída
-							</span>
-						</div>
-					)}
-				</RadioGroup.Option>
-			</RadioGroup>
+			<Controller
+				control={control}
+				name="type"
+				render={({ field }) => {
+					return (
+						<RadioGroup
+							value={field.value}
+							onChange={field.onChange}
+							className="flex gap-4 mt-6 mb-10">
+							<RadioGroup.Label className="sr-only">
+								Tipo de transação
+							</RadioGroup.Label>
+							<RadioGroup.Option
+								value="income"
+								className="flex-1 cursor-pointer">
+								{({ checked }) => (
+									<div
+										className={`px-6 py-4 rounded-md ${
+											checked ? "bg-green-700" : "bg-gray-700 hover:bg-gray-600"
+										}`}>
+										<span
+											className={`${
+												checked ? "text-white" : "text-gray-300"
+											} flex items-center justify-center gap-2`}>
+											<ArrowCircleUp
+												size={24}
+												color={`${checked ? "#ffffff" : "#00B37E"}`}
+											/>
+											Entrada
+										</span>
+									</div>
+								)}
+							</RadioGroup.Option>
+							<RadioGroup.Option
+								value="outcome"
+								className="flex-1 cursor-pointer">
+								{({ checked }) => (
+									<div
+										className={`px-6 py-4 rounded-md ${
+											checked ? "bg-red-800" : "bg-gray-700 hover:bg-gray-600"
+										} hover:transition-colors`}>
+										<span
+											className={`${
+												checked ? "text-white" : "text-gray-300"
+											} flex items-center justify-center gap-2 hover:transition-colors`}>
+											<ArrowCircleDown
+												size={24}
+												color={`${checked ? "#ffffff" : "#F75A68"} `}
+											/>
+											Saída
+										</span>
+									</div>
+								)}
+							</RadioGroup.Option>
+						</RadioGroup>
+					);
+				}}
+			/>
 			<button
 				disabled={isSubmitting}
 				type="submit"
