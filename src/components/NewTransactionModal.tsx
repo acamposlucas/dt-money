@@ -1,10 +1,12 @@
 import { RadioGroup } from "@headlessui/react";
 import { ArrowCircleDown, ArrowCircleUp } from "phosphor-react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import * as z from "zod";
+import { api } from "../lib/axios";
+import { TransactionsContext } from "../contexts/TransactionContext";
 
 const newTransactionFormSchema = z.object({
 	description: z.string(),
@@ -16,11 +18,14 @@ const newTransactionFormSchema = z.object({
 type NewTrasactionFormInputs = z.infer<typeof newTransactionFormSchema>;
 
 export const NewTransactionModal = () => {
+	const { createTransaction } = useContext(TransactionsContext);
+
 	const {
 		control,
 		register,
 		handleSubmit,
 		formState: { isSubmitting },
+		reset,
 	} = useForm<NewTrasactionFormInputs>({
 		resolver: zodResolver(newTransactionFormSchema),
 		defaultValues: {
@@ -29,9 +34,16 @@ export const NewTransactionModal = () => {
 	});
 
 	async function handleCreateNewTransaction(data: NewTrasactionFormInputs) {
-		await new Promise((resolve) => setTimeout(resolve, 2000));
+		const { description, category, price, type } = data;
 
-		console.log(data);
+		createTransaction({
+			description,
+			category,
+			price,
+			type,
+		});
+
+		reset();
 	}
 
 	return (
